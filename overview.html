@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+    <head>
+        <meta charset="utf-8">
+        <title>Unix Command Survey</title>
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+        <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+        <script src="handlebars.js" charset="utf-8"></script>
+
+        <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css" rel="stylesheet">
+    <style>
+      rect { fill: teal; }
+      #sidebar .bar {
+        text-align: left;
+        text-indent: 30px;
+      }
+      #sidebar .bar a {
+        color: #222;
+        font-weight: bold;
+      }
+    </style>
+    <script id="basic-overview" type="text/x-handlebars-template">
+      <div class="page-header"> <h1>{{command}}</h1> </div>
+      <p>
+      <strong> {{num_people}}% </strong> of people have {{command}} in their history!
+      </p>
+      <p>
+      It is mentioned a total of  <strong>{{total_count}}</strong> times.
+      </p>
+      <p>
+       {{#if display_percent}}
+       <strong>{{percent_the_most}}%</strong> of people use this command more than any other command.
+       {{else}}
+       Pretty much nobody uses this command the most.
+      {{/if}}
+      </p>
+    </script>
+    </head>
+    <body>
+      <div class="navbar navbar-inverse">
+          <div class="navbar-inner">
+            <a class="brand" href="#">#! unix command survey</a>
+            <ul class="nav">
+              <li class="active"><a href="about.html">About</a></li>
+              <li><a href="index.html">Overview</a></li>
+              <li><a href="#">Find yourself!</a></li>
+            </ul>
+          </div>
+        </div>
+      <div class="container"> 
+        <div id="sidebar" class="span2">
+          <ul class="nav nav-list" id="command-list">
+            <!-- <li> <a href="#"> hi <i class="icon-chevron-right"></i></a> </li> -->
+            <!-- <li> <a href="#"> hi <i class="icon-chevron-right"></i></a> </li> -->
+            <!-- <li> <a href="#"> hi <i class="icon-chevron-right"></i></a> </li> -->
+            <!-- <li> <a href="#"> hi <i class="icon-chevron-right"></i></a> </li> -->
+          </ul>
+        </div>
+        <div id="main" class="span8">
+        </div>
+      </div>
+    <!-- dynamic height and width -->
+    <script>
+      function max_key_in_map(map) {
+        var max_val = 0;
+        var max_key;
+        var keys = map.keys();
+        for(var i = 0; i < keys.length; i++) {
+          key = keys[i];
+          if (map.get(key) > max_val)  {
+            max_val = map.get(key);
+            max_key = key;
+          }
+        }
+        return max_key;
+      }
+      function render_command(command_list, command) {
+         var counts = command_list.map(function(d) {return d.get(command)});
+         var top_commands = command_list.map(max_key_in_map);
+         var percent_the_most = Math.round(top_commands.filter(function(d) {return d == command}).length / top_commands.length * 1000) / 10;
+         var percent_using = Math.round(counts.filter(function(d) {return d != null}).length / counts.length * 100);
+         var source   = $("#basic-overview").html();
+         var template = Handlebars.compile(source);
+         var context = {
+          command: command, 
+          num_people: percent_using,
+          total_count: d3.sum(counts),
+          percent_the_most: percent_the_most,
+          display_percent: percent_the_most > 0.5
+        }
+              var html = template(context);
+      $('#main').html(template(context));
+      }
+
+      function render_sidebar(command_list, command_names) {
+        d3.select('ul#command-list').selectAll('li')
+          .data(command_names)
+          .enter()
+          .append('li')
+          .attr('class', 'progress')
+          .append('div')
+          .attr('class', 'bar')
+          .style('width', function(d) {
+            return d['num_people_using'] / 10 + '%';
+          })
+          .append('a')
+          .style('color', '#222')
+          .style('font-weight', 'bold')
+          .attr('href', function(d) {return '#' + d['command']})
+          .text(function(d) {return d['command']})
+          .on('click', function(d) {
+            render_command(command_list, d['command']);
+          })
+
+      }
+      d3.json("commands.json", function(commands) {
+        d3.csv("all_commands.csv", function(data) {
+          commands = commands.map(function(d) {return d3.map(d)});
+          for (var i = 0; i < commands.length; i++) {
+            person = commands[i];
+            var keys = person.keys();
+            for (var j = 0; j < keys.length; j++) {
+              person[keys[j]] += 0;
+            }
+          }
+          render_command(commands, 'git');
+          render_sidebar(commands, data);
+        })
+      });
+    </script>
+    </body>
+</html>
