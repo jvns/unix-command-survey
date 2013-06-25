@@ -1,21 +1,42 @@
 <!DOCTYPE html>
-<meta charset="utf-8">
-<style>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
 
-.node {
-  stroke: #fff;
-  stroke-width: 1.5px;
-}
+  .node {
+    stroke: #fff;
+    stroke-width: 1.5px;
+  }
 
-.link {
-  stroke: #333;
-  stroke-opacity: .6;
-}
+  .link {
+    stroke: #333;
+    stroke-opacity: .6;
+  }
 
-</style>
+  </style>
+  <link href="libs/bootstrap.min.css" rel="stylesheet">
+</head>
 <body>
+  <div class="container-fluid">
+    <div class="row-fluid">
+      <div class="span3">
+          <h2> Commands that HN use </h2>
+          <form>
+              <label for="cmd">Central command:</label> 
+              <input id="cmd" name="center">
+              <label for="degree">How far to go out:</label> 
+              <input id="degree" name="degree">
+              <input type="button" value="Submit">
+          </form>
+      </div>
+      <div class="span9 main">
+      </div>
+    </div>
+  </div>
 <!-- <script src="libs/d3.v3.min.js"></script> -->
 <script src="libs/d3.js"></script>
+<script src="libs/jquery.min.js"></script>
 <script src="graph.js"></script>
 <script>
 
@@ -32,7 +53,7 @@ var force = d3.layout.force()
     .gravity(0.02)
     .size([width, height]);
 
-var svg = d3.select("body").append("svg")
+var svg = d3.select("div.main").append("svg")
     .attr("width", width)
     .attr("height", height);
 
@@ -43,6 +64,8 @@ d3.json("unix-command-graph.json", function(error, graph) {
       graph = subgraph(graph, +params['min_correlation']);
   }
   if (params['center'] && params['degree']) {
+      $('#degree').val(params['degree']);
+      $('#cmd').val(params['center']);
       graph = subgraph_neighborhood(graph, params['center'], +params['degree']);
   }
   display_graph(graph);
