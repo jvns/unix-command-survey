@@ -22,12 +22,14 @@
     <div class="row-fluid">
       <div class="span3">
           <h2> Commands that HN use </h2>
-          <form>
+          <form action="graph.html">
               <label for="cmd">Central command:</label> 
               <input id="cmd" name="center">
-              <label for="degree">How far to go out:</label> 
+              <label for="degree">How many degrees away:</label> 
               <input id="degree" name="degree">
-              <input type="button" value="Submit">
+              <label for="min-correlation">Minimum correlation:</label> 
+              <input id="min-correlation" name="min_correlation"> <br>
+              <input type="submit" value="Submit">
           </form>
       </div>
       <div class="span9 main">
@@ -61,6 +63,7 @@ d3.json("unix-command-graph.json", function(error, graph) {
   set_links(graph);
   var params = parse_get_params();
   if (params['min_correlation']) {
+      $('#min-correlation').val(params['min_correlation']);
       graph = subgraph(graph, +params['min_correlation']);
   }
   if (params['center'] && params['degree']) {
