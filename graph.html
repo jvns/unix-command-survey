@@ -52,7 +52,7 @@ var force = d3.layout.force()
     .linkDistance(100)
     // .linkStrength(function(l) {return l.value * 5})
     // .linkStrength(1)
-    .gravity(0.02)
+    .gravity(0.1)
     .size([width, height]);
 
 var svg = d3.select("div.main").append("svg")
@@ -67,6 +67,7 @@ d3.json("unix-command-graph.json", function(error, graph) {
       graph = subgraph(graph, +params['min_correlation']);
   }
   if (params['center'] && params['degree']) {
+      force.gravity(0.03);
       $('#degree').val(params['degree']);
       $('#cmd').val(params['center']);
       graph = subgraph_neighborhood(graph, params['center'], +params['degree']);
