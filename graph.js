@@ -1,3 +1,9 @@
+function random_node() {
+  var i = Math.round(Math.random() * complete_graph.nodes.length)
+  var node = complete_graph.nodes[i];
+  return node.name;
+}
+
 function parse_get_params() {
     var prmstr = window.location.search.substr(1),
         prmarr = prmstr.split ("&"),
