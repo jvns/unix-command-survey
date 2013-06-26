@@ -163,6 +163,13 @@ function display_graph(graph, zoom) {
       .style("font-size", node_text_size)
       .style("font-family", "monospace");
 
+  node.on('mousedown', function(d) {
+    console.log("double click!");
+    var params = {center: d.name, degree: 2};
+    console.log(params);
+    reload(params);
+  });
+
   node.on('mouseover', function() {
     d3.select(this)
       .select('circle')

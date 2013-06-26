@@ -61,19 +61,29 @@ var svg = d3.select("div.main").append("svg")
     .attr("width", width)
     .attr("height", height);
 
-d3.json("unix-command-graph.json", function(error, graph) {
-  set_links(graph);
-  var params = parse_get_params();
+var complete_graph;
+
+function reload(params) {
+  d3.selectAll('.node').remove();
+  d3.selectAll('.link').remove();
+  var graph = complete_graph;
   if (params['min_correlation']) {
-      $('#min-correlation').val(params['min_correlation']);
-      graph = subgraph(graph, +params['min_correlation']);
+    $('#min-correlation').val(params['min_correlation']);
+    graph = subgraph(graph, +params['min_correlation']);
   }
   if (params['center'] && params['degree']) {
-      force.gravity(0.03);
-      $('#degree').val(params['degree']);
-      $('#cmd').val(params['center']);
-      graph = subgraph_neighborhood(graph, params['center'], +params['degree']);
+    force.gravity(0.03);
+    $('#degree').val(params['degree']);
+    $('#cmd').val(params['center']);
+    graph = subgraph_neighborhood(graph, params['center'], +params['degree']);
   }
   display_graph(graph, zoom);
+}
+
+d3.json("unix-command-graph.json", function(error, graph) {
+  set_links(graph);
+  complete_graph = graph;
+  var params = parse_get_params();
+  reload(params);
 });
 </script>
