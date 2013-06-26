@@ -20,18 +20,22 @@ function set_links(graph) {
   }
 }
 
+function subset(node_list, node_names) {
+  var new_nodes = [];
+  for (var i = 0; i < node_list.length; i++) {
+       var node = node_list[i];
+       if (node_names[node.name] === 1) {
+           new_nodes.push(node);
+       }
+  }
+  return new_nodes;
+}
+
 function subgraph_neighborhood(graph, centre, degree) {
     var nodes = neighborhood(graph, centre, degree);
-    var new_nodes = [];
     var new_links = [];
-    for (var i = 0; i < graph.nodes.length; i++) {
-        var node = graph.nodes[i];
-        if (nodes[node.name] === 1) {
-            new_nodes.push(node);
-        }
-    }
-
-    for (var i = 0; i < graph.links.length; i++) {
+    var new_nodes = subset(graph.nodes, nodes);
+     for (var i = 0; i < graph.links.length; i++) {
       var link = graph.links[i];
       if ((nodes[link.source.name] === 1) && (nodes[link.target.name] === 1)) {
           new_links.push(link);
@@ -77,18 +81,57 @@ function obj_merge(obj1, obj2)  {
 function subgraph(graph, min_correlation) {
     min_correlation = +min_correlation;
     var new_links = [];
+    var new_nodes = [];
+    var node_names = {};
     for (var i = 0; i < graph.links.length; i++) {
-      if (graph.links[i].value >= min_correlation) {
-        new_links.push(graph.links[i]);
+      var link = graph.links[i];
+      if (link.value >= min_correlation) {
+        new_links.push(link);
+        node_names[link.source.name] = 1;
+        node_names[link.target.name] = 1;
       }
     }
+
+    var new_nodes = subset(graph.nodes, node_names);
     return {
-      "nodes": graph.nodes,
+      "nodes": new_nodes,
       "links": new_links
     };
 }
 
-function display_graph(graph) {
+function find_components(graph) {
+  var components = [];
+  for (var i = 0; i < graph.links.length; i++) {
+    var link = graph.links[j];
+    var found = false;
+    for (var j = 0; j < components.length; j++) {
+      var component = component[j];
+      if (component[link.source.name] == 1) {
+          component[link.target.name] = 1;
+          found = true;
+      } else if (component[link.target.name == 1]) {
+          component[link.source.name] = 1;
+          found = true;
+      } 
+    }
+    if (found == false) {
+        var new_component = {};
+        new_component[link.source.name] = 1;
+        new_component[link.target.name] = 1;
+        components.push(new_component);
+    }
+  }
+  return components;
+}
+
+function set_component_ids(graph) {
+  var components = find_components(graph);
+  for (var i = 0; i < components.length; i++) {
+
+  }
+}
+
+function display_graph(graph, node_size, node_text_size) {
   force
       .nodes(graph.nodes)
       .links(graph.links)
@@ -104,7 +147,7 @@ function display_graph(graph) {
       .data(graph.nodes)
     .enter().append("circle")
       .attr("class", "node")
-      .attr("r", 15)
+      .attr("r", node_size)
       .style("fill", function(d) { return color(d.group); })
       .call(force.drag);
 
@@ -117,7 +160,7 @@ function display_graph(graph) {
       .text(function(d) {return d.name.substr(0, 5)})
       .style("fill", "white")
       .style("text-anchor", "middle")
-      .style("font-size", "8px")
+      .style("font-size", node_text_size)
       .style("font-family", "monospace")
       .call(force.drag);
 
@@ -136,7 +179,7 @@ function display_graph(graph) {
   })
   text.on('mouseout', function() {
     d3.select(this)
-    .style("font-size", "8px")
+    .style("font-size", node_text_size)
     .style("fill", "white")
     .style("font-weight", "normal")
     .text(function(d) {return d.name.substr(0, 5)})
