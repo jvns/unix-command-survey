@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <style>
 
-  .node {
+  .node circle {
     stroke: #fff;
     stroke-width: 1.5px;
   }
@@ -45,14 +45,13 @@
 var width = 960,
     height = 600;
 
-var node_size=30, 
-    node_text_size="14px";
 
 var color = d3.scale.category10();
 
+var zoom = 2;
 var force = d3.layout.force()
-    .charge(-350)
-    .linkDistance(100)
+    .charge(-150 * zoom)
+    .linkDistance(50 * zoom)
     // .linkStrength(function(l) {return l.value * 5})
     .linkStrength(0.3)
     .gravity(0.1)
@@ -75,6 +74,6 @@ d3.json("unix-command-graph.json", function(error, graph) {
       $('#cmd').val(params['center']);
       graph = subgraph_neighborhood(graph, params['center'], +params['degree']);
   }
-  display_graph(graph, node_size, node_text_size);
+  display_graph(graph, zoom);
 });
 </script>

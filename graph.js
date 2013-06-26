@@ -131,7 +131,9 @@ function set_component_ids(graph) {
   }
 }
 
-function display_graph(graph, node_size, node_text_size) {
+function display_graph(graph, zoom) {
+  var node_size = 16 * zoom, 
+      node_text_size = 8 * zoom + "px";
   force
       .nodes(graph.nodes)
       .links(graph.links)
@@ -145,51 +147,54 @@ function display_graph(graph, node_size, node_text_size) {
 
   var node = svg.selectAll(".node")
       .data(graph.nodes)
-    .enter().append("circle")
+    .enter()
+      .append("g")
       .attr("class", "node")
-      .attr("r", node_size)
-      .style("fill", function(d) { return color(d.group); })
       .call(force.drag);
 
-  var text = svg.selectAll(".nodetext")
-      .data(graph.nodes)
-    .enter().append("text")
-      .attr("class", "nodetext")
-      // .attr("width", 10)
-      // .attr("height", 10)
+  node.append("circle")
+      .attr("r", node_size)
+      .style("fill", function(d) { return color(d.group); });
+
+  node.append("text")
       .text(function(d) {return d.name.substr(0, 5)})
       .style("fill", "white")
       .style("text-anchor", "middle")
       .style("font-size", node_text_size)
-      .style("font-family", "monospace")
-      .call(force.drag);
+      .style("font-family", "monospace");
 
   node.on('mouseover', function() {
-    d3.select(this).style("r", "30")
-  })
-  text.on('mouseover', function() {
-    d3.select(this).style("font-size", "22px")
-    d3.select(this).style("font-weight", "bold")
-    d3.select(this).style("fill", "black")
-    d3.select(this).text(function(d) {return d.name})
+    d3.select(this)
+      .select('circle')
+      .style('stroke-width', 2)
+      .style('z-index', 5)
+      .style('stroke', '#333')
+      .attr("r", function(d) {
+          var len = d.name.length;
+          return Math.max(node_size * 1.2, node_size * len / 5);
+      });
+
+    d3.select(this)
+      .select('text')
+      .text(function(d) {return d.name});
   })
 
   node.on('mouseout', function() {
-    d3.select(this).style("r", "15")
-  })
-  text.on('mouseout', function() {
     d3.select(this)
-    .style("font-size", node_text_size)
-    .style("fill", "white")
-    .style("font-weight", "normal")
-    .text(function(d) {return d.name.substr(0, 5)})
-  })
-    
+      .select('circle')
+      .style('stroke-width', 0)
+      .attr("r", node_size);
 
-  node.append("title")
-      .text(function(d) { return d.name; });
-  text.append("title")
-      .text(function(d) { return d.name; });
+    d3.select(this)
+      .select('text')
+      .text(function(d) {return d.name.substr(0, 5)});
+  
+  })
+
+  // node.append("title")
+  //     .text(function(d) { return d.name; });
+  // text.append("title")
+  //     .text(function(d) { return d.name; });
 
   force.on("tick", function() {
     link.attr("x1", function(d) { return d.source.x; })
@@ -197,9 +202,11 @@ function display_graph(graph, node_size, node_text_size) {
         .attr("x2", function(d) { return d.target.x; })
         .attr("y2", function(d) { return d.target.y; });
 
-    node.attr("cx", function(d) { return d.x; })
+    node.selectAll('circle')
+        .attr("cx", function(d) { return d.x; })
         .attr("cy", function(d) { return d.y; });
-    text.attr("x", function(d) { return d.x; })
+    node.selectAll('text')
+        .attr("x", function(d) { return d.x; })
         .attr("y", function(d) { return d.y + 5; });
   });
 
