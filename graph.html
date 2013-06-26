@@ -9,6 +9,10 @@
     stroke-width: 1.5px;
   }
 
+  .center-node {
+    fill: #f00;
+  }
+
   .link {
     stroke: #333;
     stroke-opacity: .6;
@@ -78,7 +82,7 @@ function reload(params) {
     $('#cmd').val(params['center']);
     graph = subgraph_neighborhood(graph, params['center'], +params['degree']);
   }
-  display_graph(graph, zoom);
+  display_graph(graph, zoom, params['center']);
 }
 
 d3.json("unix-command-graph.json", function(error, graph) {

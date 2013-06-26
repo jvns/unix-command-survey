@@ -137,7 +137,7 @@ function set_component_ids(graph) {
   }
 }
 
-function display_graph(graph, zoom) {
+function display_graph(graph, zoom, center) {
   var node_size = 16 * zoom, 
       node_text_size = 8 * zoom + "px";
   force
@@ -160,6 +160,9 @@ function display_graph(graph, zoom) {
 
   node.append("circle")
       .attr("r", node_size)
+      .attr('class', function(d) { 
+        return d.name === center ? 'center-node' : '' 
+      })
       .style("fill", function(d) { return color(d.group); });
 
   node.append("text")
@@ -192,6 +195,7 @@ function display_graph(graph, zoom) {
       .text(function(d) {return d.name});
   })
 
+  d3.selectAll(".center-node").style('fill', '#f00')
   node.on('mouseout', function() {
     d3.select(this)
       .select('circle')
