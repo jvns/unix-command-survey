@@ -89,6 +89,12 @@ d3.json("unix-command-graph.json", function(error, graph) {
   set_links(graph);
   complete_graph = graph;
   var params = parse_get_params();
+  if (!params['center']) {
+    params['center'] = 'python';
+  }
+  if (!params['degree']) {
+    params['degree'] = 2;
+  }
   reload(params);
 });
 </script>
