@@ -2,6 +2,7 @@
 <html>
 <head>
   <meta charset="utf-8">
+  <title> People who use X use Y </title>
   <style>
 
   .node circle {
@@ -25,7 +26,7 @@
   <div class="container-fluid">
     <div class="row-fluid">
       <div class="span3">
-          <h2> Commands that HN use </h2>
+          <h2> What do you wnat to see? </h2>
           <form action="graph.html">
               <label for="cmd">Central command:</label> 
               <input id="cmd" name="center">
@@ -36,6 +37,23 @@
               <input type="submit" value="Submit">
           </form>
           <input type="submit" value="Centre at random node" onclick="reload({center: random_node(), degree: 2});">
+          <h2> What is this? </h2>
+
+          <p>
+          I ran a <a
+            href="https://docs.google.com/forms/d/1XNMoSdfYFe_WkPfU--M88oL00PDLIOAo1HxjhZvZYJ4/viewform">survey</a>
+          on <a href="http://news.ycombinator.com">Hacker
+            News</a> a little while ago asking people to submit their
+          top 100 commands from their <code>.bash_history</code>
+          </p>
+          <p>
+
+          Then I calculated some correlations. This is a network of
+          commands which are highly correlated together. You can centre
+          it at <code>gcc</code> and find out that people also run
+          <code>./a.out</code>
+          </p>
+
       </div>
       <div class="span9 main">
       </div>
