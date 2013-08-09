@@ -149,7 +149,10 @@ function display_graph(graph, zoom, center) {
       .data(graph.links)
     .enter().append("line")
       .attr("class", "link")
+      // .attr("title", function(d) {return d.value + ' '})
       .style("stroke-width", function(d) { return d.value * 10; });
+
+  link.append("svg:title").text(function(d) {return d.value + ' '});
 
   var node = svg.selectAll(".node")
       .data(graph.nodes)
@@ -172,11 +175,9 @@ function display_graph(graph, zoom, center) {
       .style("font-size", node_text_size)
       .style("font-family", "monospace");
 
-  node.on('mousedown', function(d) {
-    console.log("double click!");
-    var params = {center: d.name, degree: 2};
-    console.log(params);
-    reload(params);
+  node.on('click', function(d, i, event) {
+    reload({center: d.name, degree: 2});
+    d3.event.stopPropagation();
   });
 
   node.on('mouseover', function() {
