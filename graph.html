@@ -30,6 +30,10 @@
     top: 0px;
     z-index: 2;
   }
+  
+  #graph-form-submit {
+    margin-top: 10px;
+  }
 
   .sidebar {
     position: absolute;
@@ -58,18 +62,18 @@
           <h4> What do you want to see? </h4>
           <form action="graph.html">
               <label for="cmd">Central command:</label> 
-              <input id="cmd" name="center">
+              <input id="cmd" name="center" type="text">
               <label for="degree">How many degrees away:</label> 
-              <input id="degree" name="degree">
+              <input id="degree" name="degree" type="text">
               <label for="min-correlation">Minimum correlation:</label> 
-              <input id="min-correlation" name="min_correlation"> <br>
-              <input type="submit" value="Submit" id="graph-form-submit">
+              <input id="min-correlation" name="min_correlation" type="text"> <br>
+              <input type="submit" class="btn btn-default" value="Submit" id="graph-form-submit">
           </form>
           <p>
-          <input type="submit" value="Centre at random node" onclick="reload({center: random_node(), degree: 2});">
+          <input type="submit" class="btn btn-default" value="Centre at random node" onclick="reload({center: random_node(), degree: 2});">
         </p>
         <p>
-          <input type="submit" value="See the whole graph" onclick="reload({});">
+          <input type="submit" class="btn btn-default" value="See the whole graph" onclick="reload({});">
         </p>
         <p> <strong>Click</strong> on a node to centre the graph there</p>
         <p> Use your <strong>scroll wheel</strong> to zoom in and out</p>
